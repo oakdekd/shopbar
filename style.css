@@ -291,5 +291,23 @@ a { color: inherit; }
   .topbar, .footer, .nav, .actions, #saved, #about, .hero { display: none !important; }
   body { background: #fff; }
   .card { border: none; box-shadow: none; padding: 0; }
-  .preview-wrap { border: none; background: #fff; }
+  .card h2 { display: none; }
+  .preview-wrap {
+    border: none;
+    background: #fff;
+    padding: 32px 24px;
+  }
+  .preview-name {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    letter-spacing: -0.01em;
+  }
+  #barcode {
+    margin: 0 auto;
+  }
+  .preview-value {
+    margin-top: 18px;
+    font-size: 15px;
+  }
 }

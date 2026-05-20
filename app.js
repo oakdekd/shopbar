@@ -119,10 +119,10 @@
       try {
         JsBarcode(svg, item.tracking, {
           format: 'CODE128',
-          height: 50,
-          width: 1.6,
+          height: 60,
+          width: 2,
           displayValue: true,
-          fontSize: 12,
+          fontSize: 14,
           margin: 4,
           background: '#ffffff',
           lineColor: '#000000'

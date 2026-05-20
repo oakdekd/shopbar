@@ -13,7 +13,6 @@
   const emptyState = document.getElementById('empty-state');
   const printBtn = document.getElementById('print-btn');
   const clearBtn = document.getElementById('clear-btn');
-  const pasteBtn = document.getElementById('paste-btn');
   const nameSuggestList = document.getElementById('name-suggestions');
   const syncStatus = document.getElementById('sync-status');
   const syncText = syncStatus.querySelector('.sync-text');
@@ -243,22 +242,6 @@
 
   /* ---------- Paste ---------- */
 
-  pasteBtn.addEventListener('click', async function () {
-    let text = '';
-    try {
-      if (navigator.clipboard && navigator.clipboard.readText) {
-        text = await navigator.clipboard.readText();
-      }
-    } catch (e) { /* ignore */ }
-
-    if (text && text.trim()) {
-      applyPastedTracking(text.trim());
-      return;
-    }
-    trackingInput.focus();
-    trackingInput.select();
-  });
-
   trackingInput.addEventListener('paste', function (e) {
     const cd = e.clipboardData || window.clipboardData;
     if (!cd) return;
@@ -282,12 +265,8 @@
   }
 
   function flashPasteSuccess() {
-    pasteBtn.classList.add('is-success');
     trackingInput.classList.add('is-flash');
-    setTimeout(() => {
-      pasteBtn.classList.remove('is-success');
-      trackingInput.classList.remove('is-flash');
-    }, 600);
+    setTimeout(() => trackingInput.classList.remove('is-flash'), 600);
   }
 
   /* ---------- Render ---------- */

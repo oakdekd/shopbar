@@ -11,8 +11,10 @@
   --success-hover: #15803d;
   --danger: #dc2626;
   --danger-hover: #b91c1c;
-  --status-bg: #dcfce7;
-  --status-text: #166534;
+  --status-packed-bg: #dcfce7;
+  --status-packed-text: #166534;
+  --status-pending-bg: #fef3c7;
+  --status-pending-text: #92400e;
   --radius: 10px;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
@@ -142,6 +144,8 @@ html, body {
   font-size: 13px;
   font-weight: 500;
   border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
 }
 .btn-icon:hover { color: var(--danger); border-color: var(--danger); }
 
@@ -177,8 +181,9 @@ html, body {
 .items-table tbody tr:last-child td { border-bottom: none; }
 
 .col-no { width: 60px; }
-.col-status { width: 140px; }
-.col-barcode { width: 320px; }
+.col-status { width: 160px; }
+.col-barcode { width: 360px; }
+.cell-no { color: var(--text-muted); font-weight: 500; }
 
 .item-name { font-weight: 500; word-break: break-word; }
 .item-tracking {
@@ -188,14 +193,33 @@ html, body {
   margin-top: 2px;
 }
 
+/* Status badge */
 .status-badge {
-  display: inline-block;
-  background: var(--status-bg);
-  color: var(--status-text);
-  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  font-family: inherit;
+  transition: filter 0.15s, transform 0.05s;
+}
+.status-badge:hover { filter: brightness(0.95); }
+.status-badge:active { transform: translateY(1px); }
+.status-badge .status-ico {
+  font-size: 13px;
+  line-height: 1;
+}
+.status-badge.is-pending {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-text);
+}
+.status-badge.is-packed {
+  background: var(--status-packed-bg);
+  color: var(--status-packed-text);
 }
 
 .barcode-cell {
@@ -204,7 +228,7 @@ html, body {
   gap: 12px;
 }
 .barcode-cell svg {
-  max-width: 240px;
+  max-width: 280px;
   height: auto;
   display: block;
 }
@@ -216,52 +240,50 @@ html, body {
   font-size: 14px;
 }
 
-/* Print area (hidden on screen) */
-.print-area {
-  position: absolute;
-  left: -10000px;
-  top: 0;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
 /* Print */
 @media print {
-  @page { margin: 12mm; }
+  @page { margin: 10mm; }
   body { background: #fff; }
-  .page, .toolbar, .form-card, .page-head, .table-card { display: none !important; }
-  .print-area {
-    position: static !important;
-    left: auto !important;
-    width: auto !important;
-    height: auto !important;
-    overflow: visible !important;
+  .page-head .subtitle,
+  .form-card,
+  .toolbar,
+  .no-print { display: none !important; }
+
+  .page { padding: 0; }
+  .page-head { margin-bottom: 12px; }
+  .page-head h1 { font-size: 20px; }
+
+  .card {
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
   }
-  .print-label {
-    page-break-after: always;
-    break-after: page;
-    padding: 24px;
-    text-align: center;
+  .table-card { border: 1px solid #d1d5db; border-radius: 8px; }
+
+  .items-table thead th {
+    background: #f9fafb !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
-  .print-label:last-child {
-    page-break-after: auto;
-    break-after: auto;
+
+  .items-table tbody td {
+    padding: 14px 16px;
   }
-  .print-label .name {
-    font-size: 26px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    letter-spacing: -0.01em;
+
+  .status-badge {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
-  .print-label svg {
-    display: block;
-    margin: 0 auto;
-    max-width: 100%;
+  .status-badge.is-pending {
+    background: var(--status-pending-bg) !important;
+    color: var(--status-pending-text) !important;
   }
-  .print-label .tracking {
-    margin-top: 14px;
-    font-size: 15px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  .status-badge.is-packed {
+    background: var(--status-packed-bg) !important;
+    color: var(--status-packed-text) !important;
   }
+
+  .barcode-cell svg { max-width: 100%; }
+
+  tr { page-break-inside: avoid; break-inside: avoid; }
 }

@@ -6,9 +6,8 @@
   const emptyState = document.getElementById('empty-state');
   const printBtn = document.getElementById('print-btn');
   const clearBtn = document.getElementById('clear-btn');
-  const printArea = document.getElementById('print-area');
 
-  const STORAGE_KEY = 'shopbarcode.items.v1';
+  const STORAGE_KEY = 'shopbarcode.items.v2';
 
   let items = load();
   render();
@@ -22,7 +21,8 @@
     items.push({
       id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
       name: name,
-      tracking: tracking
+      tracking: tracking,
+      packed: false
     });
     save();
     render();
@@ -45,17 +45,26 @@
       alert('ยังไม่มีรายการ เพิ่มสินค้าก่อนพิมพ์');
       return;
     }
-    buildPrintArea();
     window.print();
   });
 
   function load() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
+      if (!raw) return migrateFromV1();
+      return JSON.parse(raw);
     } catch (e) {
       return [];
     }
+  }
+
+  function migrateFromV1() {
+    try {
+      const old = localStorage.getItem('shopbarcode.items.v1');
+      if (!old) return [];
+      const parsed = JSON.parse(old);
+      return parsed.map(it => Object.assign({ packed: false }, it));
+    } catch (e) { return []; }
   }
 
   function save() {
@@ -76,6 +85,7 @@
 
       const tdNo = document.createElement('td');
       tdNo.textContent = idx + 1;
+      tdNo.className = 'cell-no';
       tr.appendChild(tdNo);
 
       const tdName = document.createElement('td');
@@ -90,9 +100,18 @@
       tr.appendChild(tdName);
 
       const tdStatus = document.createElement('td');
-      const badge = document.createElement('span');
-      badge.className = 'status-badge';
-      badge.textContent = 'พร้อมพิมพ์';
+      const badge = document.createElement('button');
+      badge.type = 'button';
+      badge.className = 'status-badge ' + (item.packed ? 'is-packed' : 'is-pending');
+      badge.innerHTML = item.packed
+        ? '<span class="status-ico">✓</span><span>แพ๊คแล้ว</span>'
+        : '<span class="status-ico">⏳</span><span>ยังไม่แพ๊ค</span>';
+      badge.title = item.packed ? 'คลิกเพื่อเปลี่ยนเป็นยังไม่แพ๊ค' : 'คลิกเมื่อแพ๊คเสร็จแล้ว';
+      badge.addEventListener('click', function () {
+        items[idx].packed = !items[idx].packed;
+        save();
+        render();
+      });
       tdStatus.appendChild(badge);
       tr.appendChild(tdStatus);
 
@@ -104,7 +123,7 @@
       try {
         JsBarcode(svg, item.tracking, {
           format: 'CODE128',
-          height: 44,
+          height: 50,
           width: 1.6,
           displayValue: true,
           fontSize: 12,
@@ -116,7 +135,7 @@
 
       const delBtn = document.createElement('button');
       delBtn.type = 'button';
-      delBtn.className = 'btn-icon';
+      delBtn.className = 'btn-icon no-print';
       delBtn.textContent = 'ลบ';
       delBtn.addEventListener('click', function () {
         items.splice(idx, 1);
@@ -130,40 +149,6 @@
       tr.appendChild(tdBarcode);
 
       itemsBody.appendChild(tr);
-    });
-  }
-
-  function buildPrintArea() {
-    printArea.innerHTML = '';
-    items.forEach((item) => {
-      const label = document.createElement('div');
-      label.className = 'print-label';
-
-      const name = document.createElement('div');
-      name.className = 'name';
-      name.textContent = item.name;
-
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      try {
-        JsBarcode(svg, item.tracking, {
-          format: 'CODE128',
-          height: 90,
-          width: 2.4,
-          displayValue: false,
-          margin: 4,
-          background: '#ffffff',
-          lineColor: '#000000'
-        });
-      } catch (e) { /* ignore */ }
-
-      const tracking = document.createElement('div');
-      tracking.className = 'tracking';
-      tracking.textContent = item.tracking;
-
-      label.appendChild(name);
-      label.appendChild(svg);
-      label.appendChild(tracking);
-      printArea.appendChild(label);
     });
   }
 })();

@@ -51,34 +51,60 @@
 
   pasteBtn.addEventListener('click', async function () {
     let text = '';
+    let usedApi = false;
     try {
       if (navigator.clipboard && navigator.clipboard.readText) {
         text = await navigator.clipboard.readText();
-      } else {
-        throw new Error('no-clipboard');
+        usedApi = true;
       }
     } catch (e) {
-      trackingInput.focus();
-      alert('เบราว์เซอร์ไม่อนุญาตให้อ่าน clipboard กรุณาคลิกที่ช่อง Tracking แล้วกด Ctrl/Cmd+V');
+      // permission denied or unsupported (iOS Safari often blocks)
+    }
+
+    if (usedApi && text && text.trim()) {
+      applyPastedTracking(text.trim());
       return;
     }
-    text = (text || '').trim();
-    if (!text) {
-      trackingInput.focus();
-      return;
-    }
+
+    // Fallback for iOS/Safari: focus the input so the native paste
+    // bubble / keyboard suggestion appears, then rely on the paste event.
+    trackingInput.focus();
+    trackingInput.select();
+  });
+
+  // Catch real paste events on the tracking input (works everywhere,
+  // including iOS long-press → Paste). Auto-submit when both fields
+  // are filled.
+  trackingInput.addEventListener('paste', function (e) {
+    const cd = e.clipboardData || window.clipboardData;
+    if (!cd) return;
+    const text = (cd.getData('text') || '').trim();
+    if (!text) return;
+    e.preventDefault();
+    applyPastedTracking(text);
+  });
+
+  function applyPastedTracking(text) {
     trackingInput.value = text;
     flashPasteSuccess();
     if (nameInput.value.trim()) {
-      form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true }));
+      // small delay so the highlight is visible before re-render
+      setTimeout(() => {
+        if (form.requestSubmit) form.requestSubmit();
+        else form.dispatchEvent(new Event('submit', { cancelable: true }));
+      }, 120);
     } else {
       nameInput.focus();
     }
-  });
+  }
 
   function flashPasteSuccess() {
     pasteBtn.classList.add('is-success');
-    setTimeout(() => pasteBtn.classList.remove('is-success'), 600);
+    trackingInput.classList.add('is-flash');
+    setTimeout(() => {
+      pasteBtn.classList.remove('is-success');
+      trackingInput.classList.remove('is-flash');
+    }, 600);
   }
 
   function load() {

@@ -92,11 +92,7 @@
       const nameDiv = document.createElement('div');
       nameDiv.className = 'item-name';
       nameDiv.textContent = item.name;
-      const trackDiv = document.createElement('div');
-      trackDiv.className = 'item-tracking';
-      trackDiv.textContent = item.tracking;
       tdName.appendChild(nameDiv);
-      tdName.appendChild(trackDiv);
       tr.appendChild(tdName);
 
       const tdStatus = document.createElement('td');

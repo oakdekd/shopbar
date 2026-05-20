@@ -173,6 +173,7 @@ html, body {
   border-bottom: 1px solid var(--border);
   font-size: 13px;
 }
+.items-table thead th.col-barcode { text-align: right; }
 .items-table tbody td {
   padding: 14px 18px;
   border-bottom: 1px solid var(--border);
@@ -182,16 +183,11 @@ html, body {
 
 .col-no { width: 60px; }
 .col-status { width: 160px; }
-.col-barcode { width: 360px; }
+.col-barcode { width: 320px; text-align: right; }
 .cell-no { color: var(--text-muted); font-weight: 500; }
 
+.col-name { min-width: 240px; }
 .item-name { font-weight: 500; word-break: break-word; }
-.item-tracking {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
 
 /* Status badge */
 .status-badge {
@@ -225,6 +221,7 @@ html, body {
 .barcode-cell {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 12px;
 }
 .barcode-cell svg {

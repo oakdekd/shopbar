@@ -319,9 +319,9 @@ html, body {
   }
   /* Use percentages so it adapts to whatever paper size the
      browser actually uses (A4, Letter, iOS preview). */
-  .items-table th.col-no      { width: 7%; }
-  .items-table th.col-name    { width: 31%; }
-  .items-table th.col-status  { width: 22%; }
+  .items-table th.col-no      { width: 4%; }
+  .items-table th.col-name    { width: 36%; }
+  .items-table th.col-status  { width: 20%; }
   .items-table th.col-barcode { width: 40%; }
 
   /* 1 page = 7 packages, all rows the same height */
@@ -336,7 +336,14 @@ html, body {
     border-bottom: 1px dashed #d1d5db !important;
   }
   .items-table tbody tr:last-child td { border-bottom: none !important; }
-  .items-table tbody td:first-child { padding-left: 0; }
+  .items-table tbody td:first-child {
+    padding-left: 0;
+    padding-right: 2px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 12px;
+  }
+  .items-table tbody td:nth-child(2) { padding-left: 2px; }
   .items-table tbody td:last-child { padding-right: 0; }
   .item-name {
     font-size: 16px;

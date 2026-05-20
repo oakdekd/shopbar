@@ -291,32 +291,31 @@ html, body {
 
 /* Print */
 @media print {
-  @page { size: A4; margin: 10mm; }
+  @page { size: A4; margin: 4mm 3mm; }
   body { background: #fff; }
-  .page-head .subtitle,
+  .container { padding: 0; max-width: none; }
+  .page-head,
   .form-card,
   .toolbar,
   .no-print { display: none !important; }
 
   .page { padding: 0; }
-  .page-head { margin-bottom: 8px; }
-  .page-head h1 { font-size: 18px; margin: 0; }
 
   .card {
     border: none;
     box-shadow: none;
     border-radius: 0;
+    background: transparent;
   }
-  .table-card { border: 1px solid #9ca3af; border-radius: 0; }
+  .table-card { border: none; border-radius: 0; }
 
   .items-table { font-size: 14px; table-layout: fixed; width: 100%; }
-  .items-table thead { display: table-header-group; }
+  .items-table thead { display: none; }
   .items-table thead th {
-    background: #f3f4f6 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    background: transparent !important;
+    border: none !important;
     font-size: 12px;
-    padding: 6px 8px;
+    padding: 4px 6px;
   }
   /* Use percentages so it adapts to whatever paper size the
      browser actually uses (A4, Letter, iOS preview). */
@@ -326,14 +325,19 @@ html, body {
   .items-table th.col-barcode { width: 40%; }
 
   /* 1 page = 7 packages, all rows the same height */
-  .items-table tbody tr { height: 35mm; }
+  .items-table tbody tr { height: 39mm; }
   .items-table tbody td {
-    padding: 6px 8px;
-    height: 35mm;
+    padding: 4px 4px;
+    height: 39mm;
     vertical-align: middle;
     overflow: hidden;
     word-break: break-word;
+    border: none !important;
+    border-bottom: 1px dashed #d1d5db !important;
   }
+  .items-table tbody tr:last-child td { border-bottom: none !important; }
+  .items-table tbody td:first-child { padding-left: 0; }
+  .items-table tbody td:last-child { padding-right: 0; }
   .item-name {
     font-size: 16px;
     font-weight: 700;
@@ -358,7 +362,7 @@ html, body {
   .barcode-cell svg {
     width: 100%;
     height: auto;
-    max-height: 22mm;
+    max-height: 26mm;
   }
 
   .status-badge {

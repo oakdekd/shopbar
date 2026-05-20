@@ -1,0 +1,4 @@
+window.SHOPBAR_CONFIG = {
+  SUPABASE_URL: 'https://eqlryeivykkmfmhthtfu.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxbHJ5ZWl2eWtrbWZtaHRodGZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1MDQzNzgsImV4cCI6MjA5NDA4MDM3OH0.GSVz3ys5CmP_1rMjV7sFhQ-vsKbKhc9jdjaRnPERr9A'
+};

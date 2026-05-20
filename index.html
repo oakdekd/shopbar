@@ -55,6 +55,10 @@
           พิมพ์
         </button>
         <button id="clear-btn" type="button" class="btn btn-outline-danger">ล้างทั้งหมด</button>
+        <div id="sync-status" class="sync-status" title="สถานะการเชื่อมต่อ">
+          <span class="sync-dot"></span>
+          <span class="sync-text">กำลังเชื่อมต่อ…</span>
+        </div>
       </div>
 
       <section class="card table-card">
@@ -79,6 +83,8 @@
   <div id="print-area" class="print-area" aria-hidden="true"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

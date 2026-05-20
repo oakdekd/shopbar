@@ -206,6 +206,34 @@ html, body {
   display: flex;
   gap: 10px;
   margin: 20px 0;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.sync-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.sync-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #9ca3af;
+  transition: background 0.2s;
+}
+.sync-status.is-online .sync-dot { background: #16a34a; }
+.sync-status.is-syncing .sync-dot {
+  background: #2563eb;
+  animation: pulse 1s infinite;
+}
+.sync-status.is-error .sync-dot { background: #dc2626; }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 /* Table */
@@ -232,6 +260,7 @@ html, body {
   vertical-align: middle;
 }
 .items-table tbody tr:last-child td { border-bottom: none; }
+.items-table tbody tr.is-pending-row { opacity: 0.6; }
 
 .col-no { width: 60px; }
 .col-status { width: 160px; }

@@ -1,118 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ShopBarcode — Barcode Generator</title>
-  <meta name="description" content="Generate barcodes for your products. Add a product name, choose a format, download as PNG or SVG." />
+  <title>สร้างบาร์โค้ดสินค้า — ShopBarcode</title>
+  <meta name="description" content="ใส่ชื่อสินค้าและเลข Tracking ระบบจะสร้างบาร์โค้ด Code128 ให้อัตโนมัติ" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23111' d='M2 4h2v16H2zm3 0h1v16H5zm2 0h2v16H7zm3 0h1v16h-1zm2 0h3v16h-3zm4 0h1v16h-1zm2 0h2v16h-2zm3 0h1v16h-1z'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="container topbar-inner">
-      <a href="/" class="brand">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span>ShopBarcode</span>
-      </a>
-      <nav class="nav">
-        <a href="#generator">Generator</a>
-        <a href="#saved">Saved</a>
-        <a href="#about">About</a>
-      </nav>
-    </div>
-  </header>
+  <main class="page">
+    <div class="container">
+      <header class="page-head">
+        <h1>สร้างบาร์โค้ดสินค้า</h1>
+        <p class="subtitle">ใส่ชื่อสินค้าและเลข Tracking ระบบจะสร้างบาร์โค้ด Code128 ให้อัตโนมัติ</p>
+      </header>
 
-  <main>
-    <section class="hero">
-      <div class="container">
-        <h1>Generate barcodes for your products</h1>
-        <p class="lede">Type a product name and a barcode value, pick a format, and download a print-ready barcode. Everything runs in your browser — no signup, no tracking.</p>
-      </div>
-    </section>
-
-    <section id="generator" class="section">
-      <div class="container grid">
-        <form id="barcode-form" class="card form">
-          <h2>New barcode</h2>
-
+      <section class="card form-card">
+        <form id="add-form" class="add-row">
           <label class="field">
-            <span>Product name</span>
-            <input type="text" id="product-name" placeholder="e.g. Organic Coffee 250g" maxlength="80" required />
+            <span class="label">ชื่อสินค้า</span>
+            <input type="text" id="product-name" placeholder="เช่น เสื้อยืดสีขาว ไซส์ M" maxlength="120" required />
           </label>
 
           <label class="field">
-            <span>Barcode value</span>
-            <input type="text" id="barcode-value" placeholder="e.g. 1234567890128" required />
-            <small id="value-hint" class="hint">Use digits for EAN/UPC. CODE128 accepts any text.</small>
+            <span class="label">เลข Tracking</span>
+            <input type="text" id="tracking" placeholder="เช่น TH1234567890" maxlength="60" required />
           </label>
 
-          <div class="field-row">
-            <label class="field">
-              <span>Format</span>
-              <select id="format">
-                <option value="CODE128" selected>CODE128 (any text)</option>
-                <option value="EAN13">EAN-13 (12–13 digits)</option>
-                <option value="EAN8">EAN-8 (7–8 digits)</option>
-                <option value="UPC">UPC-A (11–12 digits)</option>
-                <option value="CODE39">CODE39</option>
-                <option value="ITF14">ITF-14 (13–14 digits)</option>
-              </select>
-            </label>
-
-            <label class="field">
-              <span>Height (px)</span>
-              <input type="number" id="height" value="80" min="20" max="200" />
-            </label>
+          <div class="add-btn-wrap">
+            <button type="submit" class="btn btn-primary">+ เพิ่มรายการ</button>
           </div>
-
-          <div class="actions">
-            <button type="submit" class="btn primary">Generate</button>
-            <button type="button" id="save-btn" class="btn ghost">Save</button>
-          </div>
-          <p id="error" class="error" role="alert"></p>
         </form>
+      </section>
 
-        <div class="card preview">
-          <h2>Preview</h2>
-          <div id="preview-wrap" class="preview-wrap">
-            <div id="preview-name" class="preview-name">Product name</div>
-            <svg id="barcode" aria-label="Generated barcode"></svg>
-            <div id="preview-value" class="preview-value">—</div>
-          </div>
-          <div class="actions">
-            <button type="button" id="download-png" class="btn">Download PNG</button>
-            <button type="button" id="download-svg" class="btn">Download SVG</button>
-            <button type="button" id="print-btn" class="btn ghost">Print</button>
-          </div>
+      <div class="toolbar">
+        <button id="print-btn" type="button" class="btn btn-success">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          พิมพ์
+        </button>
+        <button id="clear-btn" type="button" class="btn btn-outline-danger">ล้างทั้งหมด</button>
+      </div>
+
+      <section class="card table-card">
+        <div class="table-wrap">
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th class="col-no">#</th>
+                <th class="col-name">ชื่อสินค้า</th>
+                <th class="col-status">สถานะ</th>
+                <th class="col-barcode">BARCODE</th>
+              </tr>
+            </thead>
+            <tbody id="items-body"></tbody>
+          </table>
+          <div id="empty-state" class="empty-state">ยังไม่มีรายการ — เพิ่มสินค้าด้านบนได้เลย</div>
         </div>
-      </div>
-    </section>
-
-    <section id="saved" class="section">
-      <div class="container">
-        <div class="section-head">
-          <h2>Saved barcodes</h2>
-          <button id="clear-saved" type="button" class="btn ghost small">Clear all</button>
-        </div>
-        <p id="saved-empty" class="muted">Nothing saved yet. Generate a barcode and hit <strong>Save</strong>.</p>
-        <ul id="saved-list" class="saved-list"></ul>
-      </div>
-    </section>
-
-    <section id="about" class="section about">
-      <div class="container">
-        <h2>About</h2>
-        <p>ShopBarcode is a small free tool for shop owners and makers. Generate product barcodes, label them with a product name, and download print-ready images. Saved items live in your browser only.</p>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
-  <footer class="footer">
-    <div class="container">
-      <span>© <span id="year"></span> ShopBarcode</span>
-    </div>
-  </footer>
+  <div id="print-area" class="print-area" aria-hidden="true"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
   <script src="app.js"></script>

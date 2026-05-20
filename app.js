@@ -6,6 +6,7 @@
   const emptyState = document.getElementById('empty-state');
   const printBtn = document.getElementById('print-btn');
   const clearBtn = document.getElementById('clear-btn');
+  const pasteBtn = document.getElementById('paste-btn');
 
   const STORAGE_KEY = 'shopbarcode.items.v2';
 
@@ -47,6 +48,38 @@
     }
     window.print();
   });
+
+  pasteBtn.addEventListener('click', async function () {
+    let text = '';
+    try {
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        text = await navigator.clipboard.readText();
+      } else {
+        throw new Error('no-clipboard');
+      }
+    } catch (e) {
+      trackingInput.focus();
+      alert('เบราว์เซอร์ไม่อนุญาตให้อ่าน clipboard กรุณาคลิกที่ช่อง Tracking แล้วกด Ctrl/Cmd+V');
+      return;
+    }
+    text = (text || '').trim();
+    if (!text) {
+      trackingInput.focus();
+      return;
+    }
+    trackingInput.value = text;
+    flashPasteSuccess();
+    if (nameInput.value.trim()) {
+      form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true }));
+    } else {
+      nameInput.focus();
+    }
+  });
+
+  function flashPasteSuccess() {
+    pasteBtn.classList.add('is-success');
+    setTimeout(() => pasteBtn.classList.remove('is-success'), 600);
+  }
 
   function load() {
     try {

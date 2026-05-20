@@ -95,6 +95,46 @@ html, body {
 }
 .add-btn-wrap { display: flex; }
 
+/* Input with inline action button */
+.input-with-action {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-with-action input {
+  padding-right: 90px;
+}
+.paste-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  background: #f3f4f6;
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.paste-btn:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.paste-btn:active { transform: translateY(calc(-50% + 1px)); }
+.paste-btn.is-success {
+  background: var(--success);
+  border-color: var(--success);
+  color: #fff;
+}
+
 @media (max-width: 720px) {
   .add-row { grid-template-columns: 1fr; }
   .add-btn-wrap .btn { width: 100%; }

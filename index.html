@@ -20,7 +20,8 @@
         <form id="add-form" class="add-row">
           <label class="field">
             <span class="label">ชื่อสินค้า</span>
-            <input type="text" id="product-name" placeholder="เช่น เสื้อยืดสีขาว ไซส์ M" maxlength="120" required />
+            <input type="text" id="product-name" placeholder="เช่น เสื้อยืดสีขาว ไซส์ M" maxlength="120" required list="name-suggestions" autocomplete="off" />
+            <datalist id="name-suggestions"></datalist>
           </label>
 
           <label class="field">

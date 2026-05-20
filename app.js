@@ -9,9 +9,26 @@
   const pasteBtn = document.getElementById('paste-btn');
 
   const STORAGE_KEY = 'shopbarcode.items.v2';
+  const NAMES_KEY = 'shopbarcode.names.v1';
+  const NAMES_LIMIT = 200;
+
+  const nameSuggestList = document.getElementById('name-suggestions');
 
   let items = load();
+  let nameHistory = loadNames();
+  // Seed history from existing items the first time
+  if (nameHistory.length === 0 && items.length > 0) {
+    items.forEach(it => rememberNameSilent(it.name));
+    saveNames();
+  }
   render();
+  renderNameSuggestions();
+
+  function rememberNameSilent(name) {
+    const trimmed = (name || '').trim();
+    if (!trimmed) return;
+    if (nameHistory.indexOf(trimmed) === -1) nameHistory.push(trimmed);
+  }
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
@@ -27,6 +44,8 @@
     });
     save();
     render();
+
+    rememberName(name);
 
     form.reset();
     nameInput.focus();
@@ -128,6 +147,37 @@
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  }
+
+  function loadNames() {
+    try {
+      const raw = localStorage.getItem(NAMES_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+
+  function saveNames() {
+    localStorage.setItem(NAMES_KEY, JSON.stringify(nameHistory));
+  }
+
+  function rememberName(name) {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const idx = nameHistory.indexOf(trimmed);
+    if (idx >= 0) nameHistory.splice(idx, 1);
+    nameHistory.unshift(trimmed);
+    if (nameHistory.length > NAMES_LIMIT) nameHistory.length = NAMES_LIMIT;
+    saveNames();
+    renderNameSuggestions();
+  }
+
+  function renderNameSuggestions() {
+    nameSuggestList.innerHTML = '';
+    nameHistory.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      nameSuggestList.appendChild(opt);
+    });
   }
 
   function render() {

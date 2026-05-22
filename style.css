@@ -266,7 +266,7 @@ html, body {
   gap: 12px;
 }
 .barcode-cell svg {
-  max-width: 280px;
+  max-width: 340px;
   height: auto;
   display: block;
 }
@@ -309,9 +309,9 @@ html, body {
   /* Use percentages so it adapts to whatever paper size the
      browser actually uses (A4, Letter, iOS preview). */
   .items-table th.col-no      { width: 4%; }
-  .items-table th.col-name    { width: 36%; }
-  .items-table th.col-status  { width: 20%; }
-  .items-table th.col-barcode { width: 40%; }
+  .items-table th.col-name    { width: 31%; }
+  .items-table th.col-status  { width: 18%; }
+  .items-table th.col-barcode { width: 47%; }
 
   /* 1 page = 7 packages, all rows the same height */
   .items-table tbody tr { height: 39mm; }
@@ -358,7 +358,7 @@ html, body {
   .barcode-cell svg {
     width: 100%;
     height: auto;
-    max-height: 26mm;
+    max-height: 32mm;
   }
 
   .status-badge {

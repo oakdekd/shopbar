@@ -309,15 +309,15 @@ html, body {
   /* Use percentages so it adapts to whatever paper size the
      browser actually uses (A4, Letter, iOS preview). */
   .items-table th.col-no      { width: 3%; }
-  .items-table th.col-name    { width: 33%; }
-  .items-table th.col-status  { width: 13%; }
-  .items-table th.col-barcode { width: 51%; }
+  .items-table th.col-name    { width: 31%; }
+  .items-table th.col-status  { width: 12%; }
+  .items-table th.col-barcode { width: 54%; }
 
-  /* 1 page = 7 packages, all rows the same height */
-  .items-table tbody tr { height: 40mm; }
+  /* 1 page = 6 packages, all rows the same height */
+  .items-table tbody tr { height: 46mm; }
   .items-table tbody td {
     padding: 4px 4px;
-    height: 40mm;
+    height: 46mm;
     vertical-align: middle;
     overflow: hidden;
     word-break: break-word;
@@ -335,11 +335,11 @@ html, body {
   .items-table tbody td:nth-child(2) { padding-left: 2px; }
   .items-table tbody td:last-child { padding-right: 0; }
   .item-name {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 700;
     line-height: 1.25;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     word-break: break-word;
@@ -360,7 +360,7 @@ html, body {
   .barcode-cell svg {
     width: 100%;
     height: auto;
-    max-height: 34mm;
+    max-height: 42mm;
   }
 
   .status-badge {
@@ -377,8 +377,8 @@ html, body {
   }
 
   tr { page-break-inside: avoid; break-inside: avoid; }
-  /* Page break after every 7th item */
-  tbody tr:nth-child(7n) {
+  /* Page break after every 6th item */
+  tbody tr:nth-child(6n) {
     page-break-after: always;
     break-after: page;
   }

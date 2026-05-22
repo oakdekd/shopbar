@@ -308,16 +308,16 @@ html, body {
   }
   /* Use percentages so it adapts to whatever paper size the
      browser actually uses (A4, Letter, iOS preview). */
-  .items-table th.col-no      { width: 4%; }
-  .items-table th.col-name    { width: 31%; }
-  .items-table th.col-status  { width: 18%; }
-  .items-table th.col-barcode { width: 47%; }
+  .items-table th.col-no      { width: 3%; }
+  .items-table th.col-name    { width: 33%; }
+  .items-table th.col-status  { width: 13%; }
+  .items-table th.col-barcode { width: 51%; }
 
   /* 1 page = 7 packages, all rows the same height */
-  .items-table tbody tr { height: 39mm; }
+  .items-table tbody tr { height: 40mm; }
   .items-table tbody td {
     padding: 4px 4px;
-    height: 39mm;
+    height: 40mm;
     vertical-align: middle;
     overflow: hidden;
     word-break: break-word;
@@ -345,11 +345,13 @@ html, body {
     word-break: break-word;
   }
   .status-badge {
-    font-size: 13px;
-    padding: 4px 10px;
-    white-space: nowrap;
+    font-size: 12px;
+    padding: 4px 8px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.2;
   }
-  .status-badge .status-ico { font-size: 12px; }
+  .status-badge .status-ico { font-size: 11px; }
 
   .barcode-cell {
     justify-content: flex-end;
@@ -358,7 +360,7 @@ html, body {
   .barcode-cell svg {
     width: 100%;
     height: auto;
-    max-height: 32mm;
+    max-height: 34mm;
   }
 
   .status-badge {

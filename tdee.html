@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>คำนวณ TDEE & เป้าหมายลดน้ำหนัก</title>
+  <meta name="description" content="คำนวณ TDEE, BMR, BMI จากน้ำหนัก อายุ ส่วนสูง พร้อมประเมินว่าต้องใช้เวลากี่วันถึงเป้าหมาย ด้วยหลัก Calorie Deficit" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%232563eb' d='M13 2L3 14h7l-1 8 10-12h-7z'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="tdee.css" />
+</head>
+<body>
+  <main class="page">
+    <div class="container">
+      <header class="page-head">
+        <h1>คำนวณ TDEE &amp; เป้าหมายลดน้ำหนัก</h1>
+        <p class="subtitle">ประเมินพลังงานที่ร่างกายใช้ต่อวัน พร้อมวางแผนลดน้ำหนักด้วยหลัก Calorie Deficit (7,000 kcal ≈ 1 กก.)</p>
+      </header>
+
+      <div class="layout">
+        <!-- ===== Form ===== -->
+        <section class="card form-card">
+          <form id="tdee-form" novalidate>
+            <div class="field">
+              <span class="label">เพศ</span>
+              <div class="segmented" role="radiogroup" aria-label="เพศ">
+                <label class="seg">
+                  <input type="radio" name="gender" value="male" checked />
+                  <span>ชาย</span>
+                </label>
+                <label class="seg">
+                  <input type="radio" name="gender" value="female" />
+                  <span>หญิง</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <label class="field">
+                <span class="label">อายุ <small>(ปี)</small></span>
+                <input type="number" id="age" inputmode="numeric" min="10" max="100" step="1" placeholder="เช่น 30" required />
+              </label>
+
+              <label class="field">
+                <span class="label">ส่วนสูง <small>(ซม.)</small></span>
+                <input type="number" id="height" inputmode="decimal" min="100" max="250" step="0.1" placeholder="เช่น 170" required />
+              </label>
+            </div>
+
+            <label class="field">
+              <span class="label">น้ำหนักปัจจุบัน <small>(กก.)</small></span>
+              <input type="number" id="weight" inputmode="decimal" min="25" max="400" step="0.1" placeholder="เช่น 75" required />
+            </label>
+
+            <label class="field">
+              <span class="label">ระดับกิจกรรมต่อวัน</span>
+              <select id="activity">
+                <option value="1.2">นั่งทำงานเป็นหลัก ไม่ออกกำลังกาย</option>
+                <option value="1.375">ออกกำลังกายเบา 1–3 วัน/สัปดาห์</option>
+                <option value="1.55" selected>ออกกำลังกายปานกลาง 3–5 วัน/สัปดาห์</option>
+                <option value="1.725">ออกกำลังกายหนัก 6–7 วัน/สัปดาห์</option>
+                <option value="1.9">นักกีฬา / ใช้แรงงานหนักมาก</option>
+              </select>
+            </label>
+
+            <hr class="divider" />
+
+            <div class="field">
+              <span class="label">เป้าหมาย</span>
+              <div class="segmented" role="radiogroup" aria-label="เป้าหมาย">
+                <label class="seg">
+                  <input type="radio" name="goalMode" value="target" checked />
+                  <span>ระบุน้ำหนักเป้าหมาย</span>
+                </label>
+                <label class="seg">
+                  <input type="radio" name="goalMode" value="amount" />
+                  <span>ระบุจำนวนที่จะลด</span>
+                </label>
+              </div>
+            </div>
+
+            <label class="field" id="target-field">
+              <span class="label">น้ำหนักเป้าหมาย <small>(กก.)</small></span>
+              <input type="number" id="targetWeight" inputmode="decimal" min="25" max="400" step="0.1" placeholder="เช่น 68" />
+            </label>
+
+            <label class="field" id="amount-field" hidden>
+              <span class="label">ต้องการลด <small>(กก.)</small></span>
+              <input type="number" id="lossAmount" inputmode="decimal" min="0.5" max="200" step="0.1" placeholder="เช่น 7" />
+            </label>
+
+            <label class="field">
+              <span class="label">อัตราการลดต่อวัน (Calorie Deficit)</span>
+              <select id="deficit">
+                <option value="250">ช้า–ปลอดภัย — ขาด 250 kcal/วัน (≈ 0.25 กก./สัปดาห์)</option>
+                <option value="500" selected>ปานกลาง — ขาด 500 kcal/วัน (≈ 0.5 กก./สัปดาห์)</option>
+                <option value="750">เร็ว — ขาด 750 kcal/วัน (≈ 0.75 กก./สัปดาห์)</option>
+                <option value="1000">เร็วมาก — ขาด 1,000 kcal/วัน (≈ 1 กก./สัปดาห์)</option>
+              </select>
+            </label>
+
+            <div class="actions">
+              <button type="submit" class="btn btn-primary">คำนวณ</button>
+              <button type="reset" class="btn btn-outline" id="reset-btn">ล้างค่า</button>
+            </div>
+
+            <p class="error-text" id="error-text" hidden></p>
+          </form>
+        </section>
+
+        <!-- ===== Results ===== -->
+        <section class="card result-card" id="result-card" hidden>
+          <div class="stat-grid">
+            <div class="stat">
+              <span class="stat-label">BMR</span>
+              <span class="stat-value" id="out-bmr">–</span>
+              <span class="stat-unit">kcal/วัน</span>
+              <span class="stat-desc">พลังงานพื้นฐานขณะพัก</span>
+            </div>
+            <div class="stat stat-primary">
+              <span class="stat-label">TDEE</span>
+              <span class="stat-value" id="out-tdee">–</span>
+              <span class="stat-unit">kcal/วัน</span>
+              <span class="stat-desc">พลังงานที่ใช้ทั้งวัน</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">BMI</span>
+              <span class="stat-value" id="out-bmi">–</span>
+              <span class="stat-unit" id="out-bmi-cat">–</span>
+              <span class="stat-desc">ดัชนีมวลกาย</span>
+            </div>
+          </div>
+
+          <div class="bmi-bar" aria-hidden="true">
+            <div class="bmi-track">
+              <span class="bmi-seg seg-under"></span>
+              <span class="bmi-seg seg-normal"></span>
+              <span class="bmi-seg seg-over"></span>
+              <span class="bmi-seg seg-obese"></span>
+              <span class="bmi-marker" id="bmi-marker"></span>
+            </div>
+            <div class="bmi-scale">
+              <span>ผอม</span><span>ปกติ</span><span>ท้วม</span><span>อ้วน</span>
+            </div>
+          </div>
+
+          <div class="plan" id="plan-box">
+            <h2 class="plan-title">แผนลดน้ำหนัก</h2>
+            <ul class="plan-list" id="plan-list"></ul>
+          </div>
+        </section>
+      </div>
+
+      <p class="foot-note">
+        สูตรคำนวณ: BMR ด้วย Mifflin–St Jeor, TDEE = BMR × ระดับกิจกรรม, การลดน้ำหนักประเมินจาก 7,000 kcal ≈ 1 กก.
+        ค่าที่ได้เป็นการประมาณการ ควรปรึกษาแพทย์หรือนักโภชนาการก่อนเริ่มลดน้ำหนักอย่างจริงจัง
+      </p>
+    </div>
+  </main>
+
+  <script src="tdee.js"></script>
+</body>
+</html>

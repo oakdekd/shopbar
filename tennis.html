@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>วิเคราะห์คลิปเทนนิส — นับ shot และแยกชนิดลูก</title>
+  <meta name="description" content="อัปโหลดคลิปการตี ระบบนับจำนวนสวิง แยกโฟร์แฮนด์/แบ็คแฮนด์ และแยกลูก Flat / Topspin / Slice ให้ ประมวลผลในเครื่องทั้งหมด" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='%23c9e265'/%3E%3Cpath d='M4.5 5.5a12 12 0 0 1 0 13M19.5 5.5a12 12 0 0 0 0 13' stroke='%23fff' stroke-width='1.6' fill='none'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="tennis.css" />
+</head>
+<body>
+  <main class="page">
+    <div class="container">
+      <header class="page-head">
+        <h1>วิเคราะห์คลิปเทนนิส</h1>
+        <p class="subtitle">
+          อัปโหลดคลิปการตีหรือ rally แล้วให้ระบบนับจำนวนสวิง แยกโฟร์แฮนด์/แบ็คแฮนด์ และเดาชนิดลูก Flat / Topspin / Slice
+          — ประมวลผลในเบราว์เซอร์ของคุณทั้งหมด คลิปไม่ถูกอัปโหลดขึ้นเซิร์ฟเวอร์
+        </p>
+      </header>
+
+      <!-- ========== 1. เลือกคลิป + ตั้งค่า ========== -->
+      <section class="card">
+        <h2>1. เลือกคลิป</h2>
+
+        <label class="dropzone" id="dropzone">
+          <input type="file" id="file-input" accept="video/*" />
+          <strong id="dropzone-title">แตะเพื่อเลือกไฟล์วิดีโอ</strong>
+          <span id="dropzone-sub">หรือลากไฟล์มาวางตรงนี้ — รองรับ mp4 / mov / webm</span>
+        </label>
+
+        <div class="settings">
+          <label class="field">
+            <span class="label">มือถนัด</span>
+            <select id="opt-handed">
+              <option value="right" selected>ขวา</option>
+              <option value="left">ซ้าย</option>
+            </select>
+            <span class="hint">ใช้เลือกว่าจะติดตามข้อมือข้างไหน</span>
+          </label>
+
+          <label class="field">
+            <span class="label">ความละเอียดโมเดล</span>
+            <select id="opt-model">
+              <option value="lite">Lite — เร็วที่สุด</option>
+              <option value="full" selected>Full — สมดุล</option>
+              <option value="heavy">Heavy — แม่นสุด ช้าสุด</option>
+            </select>
+            <span class="hint">มือถือแนะนำ Lite</span>
+          </label>
+
+          <label class="field">
+            <span class="label">อัตราสุ่มเฟรม</span>
+            <select id="opt-fps">
+              <option value="auto" selected>อัตโนมัติ (ตาม fps ของคลิป)</option>
+              <option value="60">60 fps</option>
+              <option value="30">30 fps</option>
+              <option value="15">15 fps — เร็วแต่หยาบ</option>
+            </select>
+            <span class="hint">ยิ่งสูงยิ่งแม่น แต่ประมวลผลนานขึ้น</span>
+          </label>
+
+          <label class="field">
+            <span class="label">ความไวในการจับสวิง</span>
+            <span class="range-row">
+              <input type="range" id="opt-sensitivity" min="0" max="1" step="0.05" value="0.5" />
+              <output id="out-sensitivity">0.50</output>
+            </span>
+            <span class="hint">จับได้น้อยไปให้เลื่อนขึ้น จับมั่วให้เลื่อนลง</span>
+          </label>
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-primary" id="analyze-btn" disabled>วิเคราะห์คลิป</button>
+          <button type="button" class="btn btn-outline" id="cancel-btn" hidden>ยกเลิก</button>
+          <span class="stage-time" id="clip-info"></span>
+        </div>
+
+        <div class="progress" id="progress" hidden>
+          <div class="progress-bar"><i id="progress-fill"></i></div>
+          <div class="progress-text" id="progress-text"></div>
+        </div>
+
+        <div class="notice notice-error" id="error-box" hidden></div>
+      </section>
+
+      <!-- ========== 2. วิดีโอ ========== -->
+      <section class="card" id="video-card" hidden>
+        <h2>2. คลิป</h2>
+        <div class="stage">
+          <video id="video" playsinline preload="auto" controls></video>
+          <canvas id="overlay"></canvas>
+        </div>
+        <div class="stage-bar">
+          <button type="button" class="btn btn-outline btn-sm" id="prev-shot-btn">◀ ช็อตก่อนหน้า</button>
+          <button type="button" class="btn btn-outline btn-sm" id="next-shot-btn">ช็อตถัดไป ▶</button>
+          <label class="field" style="margin:0">
+            <span style="font-size:13px;display:inline-flex;align-items:center;gap:6px;">
+              <input type="checkbox" id="opt-skeleton" checked /> แสดงโครงร่าง
+            </span>
+          </label>
+          <span class="stage-time" id="time-readout">0.00 วิ</span>
+        </div>
+      </section>
+
+      <!-- ========== 3. สรุป ========== -->
+      <section class="card" id="summary-card" hidden>
+        <h2>3. สรุปผล</h2>
+        <div class="stats">
+          <div class="stat"><span class="stat-label">สวิงทั้งหมด</span><span class="stat-value" id="s-total">0</span></div>
+          <div class="stat"><span class="stat-label">โฟร์แฮนด์</span><span class="stat-value" id="s-fh">0</span></div>
+          <div class="stat"><span class="stat-label">แบ็คแฮนด์</span><span class="stat-value" id="s-bh">0</span></div>
+          <div class="stat is-topspin"><span class="stat-label">Topspin</span><span class="stat-value" id="s-topspin">0</span></div>
+          <div class="stat is-flat"><span class="stat-label">Flat</span><span class="stat-value" id="s-flat">0</span></div>
+          <div class="stat is-slice"><span class="stat-label">Slice</span><span class="stat-value" id="s-slice">0</span></div>
+          <div class="stat is-serve"><span class="stat-label">เสิร์ฟ/สแมช</span><span class="stat-value" id="s-serve">0</span></div>
+        </div>
+        <div class="notice notice-info" id="quality-note" hidden></div>
+      </section>
+
+      <!-- ========== 4. ไทม์ไลน์ ========== -->
+      <section class="card" id="timeline-card" hidden>
+        <h2>4. ไทม์ไลน์ความเร็วข้อมือ</h2>
+        <div class="timeline-wrap"><canvas id="timeline"></canvas></div>
+        <div class="legend">
+          <span><i style="background:#7c3aed"></i>Topspin</span>
+          <span><i style="background:#0891b2"></i>Flat</span>
+          <span><i style="background:#ea580c"></i>Slice</span>
+          <span><i style="background:#65a30d"></i>เสิร์ฟ/สแมช</span>
+          <span>คลิกบนกราฟเพื่อกระโดดไปเวลานั้น</span>
+        </div>
+      </section>
+
+      <!-- ========== 5. รายการช็อต ========== -->
+      <section class="card" id="shots-card" hidden>
+        <h2>5. รายการช็อต</h2>
+        <div class="actions" style="margin-top:0;margin-bottom:14px">
+          <button type="button" class="btn btn-outline btn-sm" id="add-shot-btn">+ เพิ่มช็อต ณ เวลาปัจจุบัน</button>
+          <button type="button" class="btn btn-outline btn-sm" id="export-csv-btn">ดาวน์โหลด CSV</button>
+          <button type="button" class="btn btn-outline btn-sm" id="export-json-btn">ดาวน์โหลด JSON</button>
+        </div>
+        <div class="table-wrap">
+          <table class="shots">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>เวลา</th>
+                <th>ชนิดลูก (ระบบ)</th>
+                <th>แก้ชนิดลูก</th>
+                <th>ฝั่ง (ระบบ)</th>
+                <th>แก้ฝั่ง</th>
+                <th>มุมวิถี</th>
+                <th>ความเร็ว</th>
+                <th>มั่นใจ</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="shots-body"></tbody>
+          </table>
+        </div>
+        <p class="empty" id="shots-empty" hidden>ยังไม่พบช็อตในคลิปนี้ — ลองเลื่อนความไวขึ้น</p>
+      </section>
+
+      <!-- ========== 6. ปรับละเอียด ========== -->
+      <section class="card" id="tuning-card" hidden>
+        <h2>6. ปรับเกณฑ์ตัดสิน</h2>
+        <details class="tuning">
+          <summary>เปิดค่าขั้นสูง (ปรับแล้วผลอัปเดตทันที ไม่ต้องประมวลผลคลิปใหม่)</summary>
+          <div class="tuning-body">
+            <div class="settings">
+              <label class="field">
+                <span class="label">ระยะห่างขั้นต่ำระหว่างช็อต</span>
+                <span class="range-row">
+                  <input type="range" id="t-minGapSec" min="0.2" max="1.2" step="0.05" value="0.45" />
+                  <output id="o-minGapSec"></output>
+                </span>
+                <span class="hint">กันนับซ้ำในสวิงเดียว</span>
+              </label>
+              <label class="field">
+                <span class="label">ความกว้างสูงสุดของยอดความเร็ว</span>
+                <span class="range-row">
+                  <input type="range" id="t-maxPeakWidth" min="0.15" max="0.60" step="0.01" value="0.32" />
+                  <output id="o-maxPeakWidth"></output>
+                </span>
+                <span class="hint">กันไม่ให้จังหวะวิ่งเข้าที่ถูกนับเป็นช็อต</span>
+              </label>
+              <label class="field">
+                <span class="label">เกณฑ์สไลซ์ (มุมวิถี ต่ำกว่า)</span>
+                <span class="range-row">
+                  <input type="range" id="t-sliceAngle" min="-30" max="10" step="1" value="-3" />
+                  <output id="o-sliceAngle"></output>
+                </span>
+                <span class="hint">แร็กเก็ตวิ่งจากสูงลงต่ำ</span>
+              </label>
+              <label class="field">
+                <span class="label">เกณฑ์ท็อปสปิน (มุมวิถี สูงกว่า)</span>
+                <span class="range-row">
+                  <input type="range" id="t-topspinAngle" min="5" max="60" step="1" value="22" />
+                  <output id="o-topspinAngle"></output>
+                </span>
+                <span class="hint">ต่ำกว่านี้แต่ไม่ติดลบ = Flat</span>
+              </label>
+              <label class="field">
+                <span class="label">ความสูงปลายสวิงที่นับเป็นท็อปสปิน</span>
+                <span class="range-row">
+                  <input type="range" id="t-topspinFollow" min="0.05" max="0.9" step="0.01" value="0.30" />
+                  <output id="o-topspinFollow"></output>
+                </span>
+                <span class="hint">หน่วยเป็นความยาวลำตัว</span>
+              </label>
+              <label class="field">
+                <span class="label">เกณฑ์แยกโฟร์แฮนด์</span>
+                <span class="range-row">
+                  <input type="range" id="t-sideThr" min="-0.3" max="0.6" step="0.01" value="0.15" />
+                  <output id="o-sideThr"></output>
+                </span>
+                <span class="hint">ระยะข้อมือออกด้านข้างฝั่งมือถนัด</span>
+              </label>
+              <label class="field">
+                <span class="label">ความสูงจุดกระทบที่นับเป็นเสิร์ฟ</span>
+                <span class="range-row">
+                  <input type="range" id="t-serveVert" min="0.2" max="1.2" step="0.01" value="0.55" />
+                  <output id="o-serveVert"></output>
+                </span>
+                <span class="hint">วัดจากแนวหัวไหล่ขึ้นไป</span>
+              </label>
+              <label class="field">
+                <span class="label">มุมศอกขั้นต่ำของเสิร์ฟ</span>
+                <span class="range-row">
+                  <input type="range" id="t-serveElbow" min="90" max="175" step="1" value="130" />
+                  <output id="o-serveElbow"></output>
+                </span>
+                <span class="hint">กันวอลเลย์สูงถูกอ่านเป็นเสิร์ฟ</span>
+              </label>
+            </div>
+            <div class="actions">
+              <button type="button" class="btn btn-outline btn-sm" id="reset-tuning-btn">คืนค่าเริ่มต้น</button>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- ========== ข้อจำกัด ========== -->
+      <section class="card">
+        <h2>อ่านก่อนใช้ — ความแม่นยำและวิธีถ่าย</h2>
+        <div class="note">
+          <p style="margin-top:0">
+            ระบบนี้อ่านจาก <strong>ท่าทางร่างกาย (pose) เท่านั้น</strong> ไม่ได้ติดตามลูกบอลและไม่เห็นหน้าไม้
+            ความแม่นยำจึงต่างกันมากในแต่ละงาน:
+          </p>
+          <ul>
+            <li><strong>นับจำนวนสวิง / โฟร์แฮนด์–แบ็คแฮนด์</strong> — เชื่อถือได้ดี ถ้าถ่ายตามเงื่อนไขด้านล่าง</li>
+            <li><strong>Slice</strong> — แยกได้ค่อนข้างดี เพราะแร็กเก็ตวิ่งจากสูงลงต่ำอย่างชัดเจน</li>
+            <li>
+              <strong>Flat กับ Topspin</strong> — เป็นการ<em>เดา</em>จากความชันของวิถีข้อมือและความสูงของปลายสวิง
+              สิ่งที่แยกสองอย่างนี้จริง ๆ คือสปินของลูก ซึ่งต้องติดตามลูกบอลถึงจะวัดได้
+              ค่าความมั่นใจของสองชนิดนี้จึงถูกจำกัดเพดานไว้ให้ต่ำโดยตั้งใจ
+            </li>
+          </ul>
+          <p><strong>ถ่ายยังไงให้ผลดี</strong></p>
+          <ul>
+            <li>ตั้งกล้องนิ่งบนขาตั้ง อย่าถือเดิน</li>
+            <li>ถ่าย <strong>60 fps ขึ้นไป</strong> ถ้าทำได้ (โหมด slo-mo ของมือถือ) — 30 fps มักไม่มีเฟรมที่เห็นจังหวะปะทะเลย</li>
+            <li>มุม <strong>ด้านข้าง</strong> ดีที่สุดสำหรับแยกชนิดลูก เพราะเห็นแร็กเก็ตวิ่งขึ้น/ลงชัด</li>
+            <li>ให้มีคนเดียวในเฟรม และเห็นตัวเต็มตั้งแต่เท้าถึงหัว</li>
+          </ul>
+          <p>
+            ตารางช็อตแก้ label เองได้ และปุ่ม <code>ดาวน์โหลด CSV</code> จะส่งออกทั้งผลของระบบ ค่าที่คุณแก้
+            และฟีเจอร์ดิบทุกตัว — เอาไปใช้เป็นชุดข้อมูลเทรนโมเดลแยก Flat/Topspin ในขั้นถัดไปได้เลย
+          </p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="tennis.js"></script>
+</body>
+</html>

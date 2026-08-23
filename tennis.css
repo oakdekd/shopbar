@@ -1,0 +1,176 @@
+:root {
+  --bg: #f3f4f6;
+  --surface: #ffffff;
+  --surface-alt: #f9fafb;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --success: #16a34a;
+  --danger: #dc2626;
+  --topspin: #7c3aed;
+  --flat: #0891b2;
+  --slice: #ea580c;
+  --serve: #65a30d;
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Sarabun", "Noto Sans Thai", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page { padding: 32px 0 64px; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+.page-head { margin-bottom: 20px; }
+.page-head h1 { font-size: 26px; font-weight: 700; margin: 0 0 6px; letter-spacing: -0.01em; }
+.subtitle { margin: 0; color: var(--text-muted); font-size: 14px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card h2 { font-size: 16px; font-weight: 700; margin: 0 0 14px; }
+
+/* ---- ปุ่ม ---- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  font: inherit; font-weight: 600; font-size: 14px;
+  padding: 9px 16px; border-radius: 8px; border: 1px solid transparent;
+  cursor: pointer; background: var(--surface); color: var(--text);
+  transition: background 0.12s, border-color 0.12s, opacity 0.12s;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:not(:disabled):hover { background: var(--primary-hover); }
+.btn-outline { border-color: var(--border-strong); }
+.btn-outline:not(:disabled):hover { background: var(--surface-alt); }
+.btn-danger-text { color: var(--danger); border-color: transparent; padding: 4px 8px; font-size: 13px; }
+.btn-danger-text:hover { background: #fef2f2; }
+.btn-sm { padding: 5px 11px; font-size: 13px; }
+
+/* ---- เลือกไฟล์ ---- */
+.dropzone {
+  display: block; /* เป็น <label> จึงต้องบังคับ ไม่งั้น inline จะทำให้กล่องเส้นประเพี้ยน */
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius);
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--surface-alt);
+  transition: border-color 0.15s, background 0.15s;
+}
+.dropzone:hover, .dropzone.is-over { border-color: var(--primary); background: #eff6ff; }
+.dropzone strong { display: block; font-size: 15px; margin-bottom: 4px; }
+.dropzone span { color: var(--text-muted); font-size: 13px; }
+.dropzone input { display: none; }
+
+/* ---- ฟอร์มตั้งค่า ---- */
+.settings { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-top: 18px; }
+.field .label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.field select, .field input[type="number"] {
+  width: 100%; font: inherit; font-size: 14px; padding: 8px 10px;
+  border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); color: var(--text);
+}
+.field input[type="range"] { width: 100%; accent-color: var(--primary); }
+.field .hint { display: block; color: var(--text-muted); font-size: 12px; margin-top: 4px; }
+.range-row { display: flex; align-items: center; gap: 10px; }
+.range-row output { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--text-muted); min-width: 46px; text-align: right; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; }
+
+/* ---- ความคืบหน้า ---- */
+.progress { margin-top: 14px; }
+.progress[hidden] { display: none; }
+.progress-bar { height: 7px; background: var(--border); border-radius: 999px; overflow: hidden; }
+.progress-bar i { display: block; height: 100%; width: 0; background: var(--primary); transition: width 0.15s linear; }
+.progress-text { font-size: 13px; color: var(--text-muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+
+.notice { border-radius: 8px; padding: 10px 12px; font-size: 13px; margin-top: 12px; }
+.notice-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.notice-info { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+
+/* ---- วิดีโอ ---- */
+.stage { position: relative; background: #000; border-radius: var(--radius); overflow: hidden; line-height: 0; }
+.stage video { width: 100%; display: block; max-height: 62vh; object-fit: contain; background: #000; }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.stage-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
+.stage-time { font-variant-numeric: tabular-nums; font-size: 13px; color: var(--text-muted); margin-left: auto; }
+
+/* ---- สรุปผล ---- */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+.stat { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.stat-label { font-size: 12px; color: var(--text-muted); display: block; }
+.stat-value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; display: block; line-height: 1.25; }
+.stat.is-topspin .stat-value { color: var(--topspin); }
+.stat.is-flat .stat-value { color: var(--flat); }
+.stat.is-slice .stat-value { color: var(--slice); }
+.stat.is-serve .stat-value { color: var(--serve); }
+
+/* ---- กราฟไทม์ไลน์ ---- */
+.timeline-wrap { position: relative; }
+.timeline-wrap canvas { width: 100%; height: 150px; display: block; cursor: crosshair; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 12px; color: var(--text-muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+/* ---- ตารางช็อต ---- */
+.table-wrap { overflow-x: auto; }
+table.shots { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 720px; }
+table.shots th, table.shots td { padding: 9px 10px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+table.shots th { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+table.shots tbody tr { cursor: pointer; }
+table.shots tbody tr:hover { background: var(--surface-alt); }
+table.shots tbody tr.is-active { background: #eff6ff; }
+table.shots td.num { font-variant-numeric: tabular-nums; }
+table.shots select { font: inherit; font-size: 13px; padding: 4px 6px; border: 1px solid var(--border-strong); border-radius: 6px; background: var(--surface); }
+table.shots select.is-edited { border-color: var(--primary); background: #eff6ff; font-weight: 600; }
+
+.pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.pill-topspin { background: #f3e8ff; color: #6b21a8; }
+.pill-flat { background: #cffafe; color: #155e75; }
+.pill-slice { background: #ffedd5; color: #9a3412; }
+.pill-serve { background: #ecfccb; color: #3f6212; }
+
+.conf { display: inline-block; width: 42px; height: 6px; border-radius: 999px; background: var(--border); vertical-align: middle; overflow: hidden; }
+.conf i { display: block; height: 100%; background: var(--success); }
+.conf.is-low i { background: #f59e0b; }
+
+.empty { color: var(--text-muted); font-size: 14px; text-align: center; padding: 26px 0; }
+
+/* ---- แผงปรับละเอียด ---- */
+details.tuning { border: 1px solid var(--border); border-radius: 8px; padding: 0; background: var(--surface-alt); }
+details.tuning > summary { cursor: pointer; padding: 11px 14px; font-weight: 600; font-size: 14px; list-style: none; }
+details.tuning > summary::-webkit-details-marker { display: none; }
+details.tuning > summary::before { content: "▸ "; color: var(--text-muted); }
+details[open].tuning > summary::before { content: "▾ "; }
+details.tuning .tuning-body { padding: 0 14px 16px; }
+
+.note { font-size: 13px; color: var(--text-muted); }
+.note ul { margin: 8px 0 0; padding-left: 20px; }
+.note li { margin-bottom: 5px; }
+.note code { background: var(--surface-alt); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 12px; }
+
+[hidden] { display: none !important; }
+
+@media (max-width: 640px) {
+  .page { padding: 20px 0 48px; }
+  .container { padding: 0 14px; }
+  .page-head h1 { font-size: 21px; }
+  .card { padding: 16px; }
+}

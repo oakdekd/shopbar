@@ -387,3 +387,8 @@ html, body {
     break-after: auto;
   }
 }
+
+.site-links { text-align: center; font-size: 13px; color: var(--text-muted); margin: 24px 0 0; }
+.site-links a { color: var(--text-muted); }
+.site-links a:hover { color: var(--primary); }
+@media print { .site-links { display: none; } }

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>หลังร้าน — ShopBar Market</title>
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#ee4d2d" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ee4d2d' d='M6 2l-2 5v13a2 2 0 002 2h12a2 2 0 002-2V7l-2-5H6zm0 2h12l1 3H5l1-3zm-1 5h14v11H5V9zm4 2v2a3 3 0 006 0v-2h-2v2a1 1 0 01-2 0v-2H9z'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="shop.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="./">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 2l-2 5v13a2 2 0 002 2h12a2 2 0 002-2V7l-2-5H6zm0 2h12l1 3H5l1-3zm-1 5h14v11H5V9zm4 2v2a3 3 0 006 0v-2h-2v2a1 1 0 01-2 0v-2H9z"/></svg>
+        <span id="brand-name">ShopBar Market</span>
+      </a>
+      <span style="flex:1"></span>
+      <div class="topbar-actions" id="topbar-user" hidden>
+        <a class="icon-btn" href="./" target="_blank" rel="noopener" title="เปิดหน้าร้าน">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14 4h6v6M20 4l-9 9M19 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1h5"/></svg>
+          <span class="icon-label">หน้าร้าน</span>
+        </a>
+        <button type="button" class="icon-btn" id="logout-btn" title="ออกจากระบบ">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M10 17l5-5-5-5M15 12H3M13 3h6a2 2 0 012 2v14a2 2 0 01-2 2h-6"/></svg>
+          <span class="icon-label">ออก</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== Login ===== -->
+  <section class="login-card" id="login-view">
+    <h2>เข้าสู่ระบบหลังร้าน</h2>
+    <p class="muted" style="margin-top:0">สำหรับเจ้าของร้านเท่านั้น</p>
+    <form id="login-form" class="form">
+      <label class="field"><span class="label">อีเมล</span><input type="email" name="email" required autocomplete="username" /></label>
+      <label class="field"><span class="label">รหัสผ่าน</span><input type="password" name="password" required autocomplete="current-password" /></label>
+      <p class="form-error" id="login-error" hidden></p>
+      <button type="submit" class="btn btn-primary btn-block" id="login-btn">เข้าสู่ระบบ</button>
+    </form>
+  </section>
+
+  <section class="login-card" id="not-admin-view" hidden>
+    <h2>บัญชีนี้ยังไม่ใช่แอดมิน</h2>
+    <p class="muted">เข้าสู่ระบบด้วย <strong id="not-admin-email"></strong> แล้ว แต่ยังไม่ได้ถูกตั้งเป็นแอดมินร้าน</p>
+    <p>รันคำสั่งนี้ใน Supabase &gt; SQL Editor:</p>
+    <pre id="not-admin-sql" style="background:#f5f5f5;padding:12px;border-radius:8px;font-size:12px;overflow:auto;white-space:pre-wrap"></pre>
+    <div class="btn-row">
+      <button type="button" class="btn btn-outline" id="recheck-btn">ตรวจสอบอีกครั้ง</button>
+      <button type="button" class="btn btn-neutral" id="logout-btn-2">ออกจากระบบ</button>
+    </div>
+  </section>
+
+  <!-- ===== Admin ===== -->
+  <main class="admin-page" id="admin-view" hidden>
+    <div class="admin-bar">
+      <h1>หลังร้าน</h1>
+      <div class="right">
+        <span class="muted" id="admin-email"></span>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button type="button" class="tab active" data-tab="products">สินค้า</button>
+      <button type="button" class="tab" data-tab="orders">คำสั่งซื้อ <span class="count" id="orders-new-count" hidden>0</span></button>
+      <button type="button" class="tab" data-tab="chat">แชท <span class="count" id="chat-unread-count" hidden>0</span></button>
+    </div>
+
+    <!-- Products -->
+    <section id="tab-products" class="tab-panel">
+      <div class="toolbar">
+        <input type="search" id="prod-search" placeholder="ค้นหาสินค้า…" />
+        <select id="prod-filter">
+          <option value="all">ทั้งหมด</option>
+          <option value="active">เปิดขาย</option>
+          <option value="inactive">ปิดขาย</option>
+          <option value="low">สต๊อกต่ำ (≤ 3)</option>
+        </select>
+        <span style="flex:1"></span>
+        <button type="button" class="btn btn-primary" id="add-product-btn">+ เพิ่มสินค้า</button>
+      </div>
+      <div class="card table-wrap">
+        <table class="tbl">
+          <thead><tr><th>รูป</th><th>สินค้า</th><th>ราคา</th><th>สต๊อก</th><th>ขายแล้ว</th><th>สถานะ</th><th></th></tr></thead>
+          <tbody id="prod-body"></tbody>
+        </table>
+        <div class="empty" id="prod-empty" hidden>ยังไม่มีสินค้า — กด "เพิ่มสินค้า" เพื่อเริ่ม</div>
+      </div>
+    </section>
+
+    <!-- Orders -->
+    <section id="tab-orders" class="tab-panel" hidden>
+      <div class="toolbar">
+        <select id="order-filter">
+          <option value="open">ที่ต้องจัดการ (รอยืนยัน / ยืนยันแล้ว / กำลังส่ง)</option>
+          <option value="new">รอยืนยัน</option>
+          <option value="confirmed">ยืนยันแล้ว</option>
+          <option value="shipping">กำลังส่ง</option>
+          <option value="done">ส่งแล้ว</option>
+          <option value="cancelled">ยกเลิก</option>
+          <option value="all">ทั้งหมด</option>
+        </select>
+        <button type="button" class="btn btn-neutral btn-sm" id="orders-refresh">รีเฟรช</button>
+      </div>
+      <div class="card table-wrap">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>ลูกค้า / ที่อยู่</th><th>รายการ</th><th>ยอดรวม</th><th>สถานะ</th><th></th></tr></thead>
+          <tbody id="order-body"></tbody>
+        </table>
+        <div class="empty" id="order-empty" hidden>ไม่มีคำสั่งซื้อ</div>
+      </div>
+    </section>
+
+    <!-- Chat -->
+    <section id="tab-chat" class="tab-panel" hidden>
+      <div class="card inbox" id="inbox">
+        <div class="threads" id="threads"></div>
+        <div class="convo" id="convo">
+          <div class="convo-empty" id="convo-empty">เลือกห้องแชทจากรายการ</div>
+          <div class="convo-head" id="convo-head" hidden>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button type="button" class="btn btn-neutral btn-sm inbox-mobile-back" id="inbox-back">‹ กลับ</button>
+              <div><strong id="convo-name"></strong><br /><small id="convo-sub"></small></div>
+            </div>
+            <button type="button" class="btn btn-neutral btn-sm" id="convo-orders-btn">ดูออเดอร์</button>
+          </div>
+          <div class="chat-messages" id="convo-messages" hidden></div>
+          <form class="chat-input" id="convo-form" hidden>
+            <input type="text" id="convo-input" placeholder="ตอบลูกค้า…" maxlength="2000" autocomplete="off" />
+            <button type="submit" aria-label="ส่ง"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg></button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Product form modal ===== -->
+  <div class="modal" id="product-modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <button type="button" class="modal-close" data-close aria-label="ปิด">×</button>
+      <h3 class="modal-title" id="product-modal-title">เพิ่มสินค้า</h3>
+      <form id="product-form" class="form" novalidate>
+        <input type="hidden" name="id" />
+        <label class="field"><span class="label">ชื่อสินค้า *</span><input type="text" name="name" maxlength="150" required /></label>
+        <div class="form-row">
+          <label class="field"><span class="label">ราคาขาย (บาท) *</span><input type="number" name="price" min="0" step="0.01" required inputmode="decimal" /></label>
+          <label class="field"><span class="label">ราคาก่อนลด (ไม่บังคับ)</span><input type="number" name="compare_price" min="0" step="0.01" inputmode="decimal" placeholder="แสดงเป็นราคาขีดฆ่า" /></label>
+        </div>
+        <div class="form-row">
+          <label class="field"><span class="label">หมวดหมู่</span><input type="text" name="category" list="cat-list" maxlength="40" placeholder="ทั่วไป" /><datalist id="cat-list"></datalist></label>
+          <label class="field"><span class="label">จำนวนในสต๊อก *</span><input type="number" name="stock" min="0" step="1" required inputmode="numeric" value="10" /></label>
+        </div>
+        <label class="field"><span class="label">รายละเอียด</span><textarea name="description" rows="4" maxlength="2000" placeholder="ขนาด น้ำหนัก จุดเด่น เงื่อนไขการส่ง ฯลฯ"></textarea></label>
+        <div class="field">
+          <span class="label">รูปสินค้า (รูปแรกเป็นรูปหลัก · แตะรูปเพื่อตั้งเป็นรูปหลัก)</span>
+          <div class="img-picker" id="img-picker"></div>
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <input type="url" id="img-url-input" placeholder="หรือวางลิงก์รูป (https://…)" style="flex:1;border:1px solid var(--border);border-radius:6px;padding:8px 10px" />
+            <button type="button" class="btn btn-neutral btn-sm" id="img-url-add">เพิ่มลิงก์</button>
+          </div>
+          <div class="upload-progress" id="upload-progress"></div>
+        </div>
+        <label class="radio" style="align-self:flex-start"><input type="checkbox" name="is_active" checked /><span>เปิดขายบนหน้าร้าน</span></label>
+        <p class="form-error" id="product-error" hidden></p>
+        <div class="btn-row" style="justify-content:flex-end">
+          <button type="button" class="btn btn-neutral" data-close>ยกเลิก</button>
+          <button type="submit" class="btn btn-primary" id="product-save">บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== Order detail modal ===== -->
+  <div class="modal" id="order-modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <button type="button" class="modal-close" data-close aria-label="ปิด">×</button>
+      <h3 class="modal-title" id="order-modal-title">คำสั่งซื้อ</h3>
+      <div id="order-modal-body" class="orders-list"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../config.js"></script>
+  <script src="shop-config.js"></script>
+  <script src="common.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

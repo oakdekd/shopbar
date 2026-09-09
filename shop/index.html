@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>ShopBar Market — ส่งถึงบ้านในชัยนาท</title>
+  <meta name="description" content="ร้านค้าออนไลน์ ส่งสินค้าเองถึงบ้านในจังหวัดชัยนาทและพื้นที่ใกล้เคียง สอบถามได้ทางแชท" />
+  <meta name="theme-color" content="#ee4d2d" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ee4d2d' d='M6 2l-2 5v13a2 2 0 002 2h12a2 2 0 002-2V7l-2-5H6zm0 2h12l1 3H5l1-3zm-1 5h14v11H5V9zm4 2v2a3 3 0 006 0v-2h-2v2a1 1 0 01-2 0v-2H9z'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="shop.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="./">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 2l-2 5v13a2 2 0 002 2h12a2 2 0 002-2V7l-2-5H6zm0 2h12l1 3H5l1-3zm-1 5h14v11H5V9zm4 2v2a3 3 0 006 0v-2h-2v2a1 1 0 01-2 0v-2H9z"/></svg>
+        <span id="brand-name">ShopBar Market</span>
+      </a>
+      <form class="search" id="search-form" role="search">
+        <input type="search" id="search-input" placeholder="ค้นหาสินค้า…" autocomplete="off" />
+        <button type="submit" aria-label="ค้นหา">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M10.5 18a7.5 7.5 0 110-15 7.5 7.5 0 010 15zM21 21l-5-5"/></svg>
+        </button>
+      </form>
+      <div class="topbar-actions">
+        <button type="button" class="icon-btn" id="orders-btn" title="คำสั่งซื้อของฉัน">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M3 7l9-4 9 4v10l-9 4-9-4V7zm0 0l9 4 9-4M12 11v10"/></svg>
+          <span class="icon-label">คำสั่งซื้อ</span>
+        </button>
+        <button type="button" class="icon-btn" id="cart-btn" title="ตะกร้า">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 4h2l2.5 11h11L21 7H7M9 20a1 1 0 100-2 1 1 0 000 2zm9 0a1 1 0 100-2 1 1 0 000 2z"/></svg>
+          <span class="icon-label">ตะกร้า</span>
+          <span class="badge" id="cart-count" hidden>0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="promo-strip">
+    <span>🚚 <strong>ส่งเองถึงบ้าน</strong> <span id="tagline-text">ในจังหวัดชัยนาทและพื้นที่ใกล้เคียง</span></span>
+    <span class="dot">·</span>
+    <span id="free-ship-text">ส่งฟรีเมื่อซื้อครบ ฿500</span>
+    <span class="dot">·</span>
+    <span>💬 สอบถามได้ทางแชท</span>
+  </div>
+
+  <div id="demo-banner" class="demo-banner" hidden>
+    ⚠️ ยังไม่ได้ตั้งค่าฐานข้อมูล — กำลังแสดง<strong>สินค้าตัวอย่าง</strong> (รัน <code>shop/schema.sql</code> ใน Supabase ก่อนใช้งานจริง)
+  </div>
+
+  <main class="page">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="hero-text">
+          <h1>ช้อปง่าย ส่งไว ถึงบ้านคุณ</h1>
+          <p>สินค้าทุกชิ้นเราจัดส่งเองในชัยนาทและจังหวัดใกล้เคียง ไม่ต้องรอขนส่ง สั่งวันนี้ได้รับไว มีคำถาม? ทักแชทได้เลย</p>
+          <div class="hero-actions">
+            <a href="#products" class="btn btn-light">ดูสินค้าทั้งหมด</a>
+            <button type="button" class="btn btn-ghost" id="hero-chat-btn">สอบถามทางแชท</button>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <svg viewBox="0 0 200 160">
+            <rect x="20" y="70" width="110" height="60" rx="6" fill="#fff" opacity=".95"/>
+            <path d="M130 85h30l20 20v25h-50z" fill="#fff" opacity=".85"/>
+            <rect x="140" y="92" width="22" height="14" rx="2" fill="#ee4d2d" opacity=".6"/>
+            <circle cx="50" cy="132" r="12" fill="#2d2d2d"/><circle cx="50" cy="132" r="5" fill="#fff"/>
+            <circle cx="155" cy="132" r="12" fill="#2d2d2d"/><circle cx="155" cy="132" r="5" fill="#fff"/>
+            <rect x="35" y="82" width="30" height="30" rx="3" fill="#ffd2c8"/>
+            <rect x="72" y="82" width="30" height="30" rx="3" fill="#ffe8b3"/>
+            <path d="M40 40l10-14 10 14" stroke="#fff" stroke-width="5" fill="none" opacity=".5"/>
+            <path d="M160 30l10-14 10 14" stroke="#fff" stroke-width="5" fill="none" opacity=".35"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <nav class="cats" id="cats" aria-label="หมวดหมู่"></nav>
+
+    <section id="products" class="listing">
+      <div class="listing-head">
+        <h2 id="listing-title">สินค้าทั้งหมด</h2>
+        <label class="sort">
+          <span>เรียงตาม</span>
+          <select id="sort-select">
+            <option value="newest">ล่าสุด</option>
+            <option value="bestseller">ขายดี</option>
+            <option value="price-asc">ราคา: ต่ำ → สูง</option>
+            <option value="price-desc">ราคา: สูง → ต่ำ</option>
+          </select>
+        </label>
+      </div>
+      <div id="grid" class="grid" aria-live="polite"></div>
+      <div id="grid-empty" class="empty" hidden>ไม่พบสินค้าที่ค้นหา</div>
+      <div id="grid-loading" class="empty">กำลังโหลดสินค้า…</div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <strong id="footer-name">ShopBar Market</strong>
+        <p id="footer-tagline">ส่งเองถึงบ้าน ในจังหวัดชัยนาทและพื้นที่ใกล้เคียง</p>
+        <p id="footer-contact"></p>
+      </div>
+      <div class="footer-links">
+        <a href="../">เครื่องมือบาร์โค้ด</a>
+        <a href="admin.html">สำหรับร้านค้า</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== Product modal ===== -->
+  <div class="modal" id="product-modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card product-card-modal" role="dialog" aria-modal="true">
+      <button type="button" class="modal-close" data-close aria-label="ปิด">×</button>
+      <div class="pm-body" id="pm-body"></div>
+    </div>
+  </div>
+
+  <!-- ===== Cart drawer ===== -->
+  <div class="drawer" id="cart-drawer" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <aside class="drawer-panel" role="dialog" aria-modal="true" aria-label="ตะกร้าสินค้า">
+      <div class="drawer-head">
+        <h3>ตะกร้าสินค้า</h3>
+        <button type="button" class="modal-close" data-close aria-label="ปิด">×</button>
+      </div>
+      <div class="drawer-body" id="cart-body"></div>
+      <div class="drawer-foot" id="cart-foot"></div>
+    </aside>
+  </div>
+
+  <!-- ===== Checkout modal ===== -->
+  <div class="modal" id="checkout-modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <button type="button" class="modal-close" data-close aria-label="ปิด">×</button>
+      <h3 class="modal-title">ยืนยันคำสั่งซื้อ</h3>
+      <form id="checkout-form" class="form" novalidate>
+        <div class="form-row">
+          <label class="field"><span class="label">ชื่อผู้รับ *</span><input type="text" name="customer_name" maxlength="80" required autocomplete="name" /></label>
+          <label class="field"><span class="label">เบอร์โทร *</span><input type="tel" name="phone" maxlength="20" required autocomplete="tel" inputmode="tel" placeholder="08x-xxx-xxxx" /></label>
+        </div>
+        <label class="field"><span class="label">พื้นที่จัดส่ง *</span><select name="district" id="district-select" required></select></label>
+        <label class="field"><span class="label">ที่อยู่จัดส่ง *</span><textarea name="address" rows="2" maxlength="300" required placeholder="บ้านเลขที่ หมู่ ตำบล จุดสังเกต"></textarea></label>
+        <label class="field"><span class="label">หมายเหตุ</span><input type="text" name="note" maxlength="200" placeholder="เช่น ส่งช่วงเย็น, โทรก่อนส่ง" /></label>
+        <fieldset class="field">
+          <span class="label">การชำระเงิน</span>
+          <div class="radio-row">
+            <label class="radio"><input type="radio" name="payment" value="cod" checked /><span>💵 เงินสดปลายทาง</span></label>
+            <label class="radio"><input type="radio" name="payment" value="transfer" /><span>🏦 โอนเงิน / พร้อมเพย์</span></label>
+          </div>
+          <p class="hint" id="promptpay-hint" hidden></p>
+        </fieldset>
+        <div class="summary" id="checkout-summary"></div>
+        <p class="form-error" id="checkout-error" hidden></p>
+        <button type="submit" class="btn btn-primary btn-block" id="checkout-submit">สั่งซื้อ</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== Order success ===== -->
+  <div class="modal" id="success-modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card center" role="dialog" aria-modal="true">
+      <div class="success-icon">✓</div>
+      <h3 class="modal-title">สั่งซื้อสำเร็จ!</h3>
+      <p id="success-text"></p>
+      <p class="muted">ทางร้านจะติดต่อยืนยันและจัดส่งให้เร็วที่สุด ติดตามสถานะได้ที่ "คำสั่งซื้อ" หรือทางแชท</p>
+      <div class="btn-row">
+        <button type="button" class="btn btn-outline" data-close>ปิด</button>
+        <button type="button" class="btn btn-primary" id="success-chat-btn">เปิดแชท</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== My orders ===== -->
+  <div class="modal" id="orders-modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <button type="button" class="modal-close" data-close aria-label="ปิด">×</button>
+      <h3 class="modal-title">คำสั่งซื้อของฉัน</h3>
+      <div id="orders-body" class="orders-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== Chat widget ===== -->
+  <button type="button" class="chat-fab" id="chat-fab" aria-label="เปิดแชท">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h16a2 2 0 012 2v10a2 2 0 01-2 2H8l-4 4V6a2 2 0 012-2zm3 5v2h10V9H7zm0 4v2h7v-2H7z"/></svg>
+    <span class="badge" id="chat-unread" hidden>0</span>
+  </button>
+  <section class="chat-panel" id="chat-panel" hidden aria-label="แชทกับร้านค้า">
+    <div class="chat-head">
+      <div>
+        <strong id="chat-shop-name">ShopBar Market</strong>
+        <small id="chat-status">ตอบกลับโดยเจ้าของร้าน</small>
+      </div>
+      <button type="button" class="modal-close" id="chat-close" aria-label="ปิดแชท">×</button>
+    </div>
+    <div class="chat-name" id="chat-name-row">
+      <input type="text" id="chat-name-input" placeholder="ชื่อของคุณ (เพื่อให้ร้านเรียกถูก)" maxlength="60" />
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-welcome">สวัสดีครับ 👋 สอบถามสินค้า ค่าส่ง หรือเวลาจัดส่งได้เลย</div>
+    </div>
+    <form class="chat-input" id="chat-form">
+      <input type="text" id="chat-input" placeholder="พิมพ์ข้อความ…" maxlength="2000" autocomplete="off" />
+      <button type="submit" aria-label="ส่ง">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg>
+      </button>
+    </form>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../config.js"></script>
+  <script src="shop-config.js"></script>
+  <script src="common.js"></script>
+  <script src="store.js"></script>
+</body>
+</html>
